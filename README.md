@@ -17,7 +17,7 @@ Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut ada
 5. Ubuntu Bento 16.04 64bit box
 
 ## Arsitektur
-Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai berikut :
+Dalam tutorial kali ini saya menggunakan **7 buah** server dengan detail sebagai berikut :
 
 | No | IP Address | Hostname | Deskripsi |
 | --- | --- | --- | --- |
@@ -27,11 +27,12 @@ Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai
 | 4 | 192.168.31.102 | service2 | Sebagai Server 2 (API-2) |
 | 5 | 192.168.31.148 | data1 | Sebagai DataNode - 1 |
 | 6 | 192.168.31.149 | data2 | Sebagai DataNode - 2 |
+| 7 | 192.168.31.150 | data3 | Sebagai DataNode - 3 |
 
 Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai bahan *provisioning* ke semua VM dan detail konfigurasi tiap-tiap VM terdapat pada `vagrantfile`.
 
 ## 1. Initiating Machine
-Untuk membuat ke-6 server , disini kita hanya perlu melakukan *command* berikut pada direktori dimana *vagrantfile* tersimpan.
+Untuk membuat ke-7 server , disini kita hanya perlu melakukan *command* berikut pada direktori dimana *vagrantfile* tersimpan.
 ```
 vagrant up
 ```
@@ -60,6 +61,7 @@ sudo ufw allow from 192.168.31.101
 sudo ufw allow from 192.168.31.102
 sudo ufw allow from 192.168.31.148
 sudo ufw allow from 192.168.31.149
+sudo ufw allow from 192.168.31.150
 sudo ufw allow from 192.168.31.192
 ```
 Adapun detail provisioning yang dilakukan ada di folder `config/provision/`.
@@ -84,7 +86,7 @@ Pada [file](https://github/abaar/distributed-database) `config.ini` , terdapat b
 ```
 ...
 [ndbd default]
-NoOfReplicas=2 
+NoOfReplicas=3
 ...
 ```
 Syntax tersebut merupakan konfigurasi berapa jumlah replikasi yang akan ada di Datanode, Isilah dengan angka, sebaiknya tidak lebih dari jumlah Datanode.
@@ -293,9 +295,59 @@ sudo systemctl status proxysql
 ```
 
 #### 2.4.3 Konfigurasi ProxySQL
-#### 2.4.4 Hubungkan Service dengan ProxySQL
-#### 2.4.5 Daftarkan Service ke ProxySQL
-#### 2.4.6 Buat User di Service agar dapat Diakses oleh ProxySQL
-#### 2.4.7 Buat User di ProxySQL agar dapat Diakses oleh Apps
+Untuk mengatur konfigurasi ProxySQL, anda perlu menjalankan perintah berikut untuk memasuki *Admin* pada ProxySQL.
+```
+mysql -u admin -p -h 127.0.0.1 -P 6032 --prompt='ProxySQLAdmin> '
+```
+Maka anda akan memasuki sebuah Console seperti gambar berikut :
+[alt text](https://github.com/abaar/distributed-database)
 
+Lalu , perintah yang anda perlu jalankan untuk mengupdate password ProxySQL adalah :
+```
+UPDATE global_variables SET variable_value='admin:admin' WHERE variable_name='admin-admin_credentials';
+LOAD ADMIN VARIABLES TO RUNTIME;
+SAVE ADMIN VARIABLES TO DISK;
+```
+
+#### 2.4.4 Hubungkan Service dengan ProxySQL
+Langkah selanjutnya adalah menghubungkan Service yang telah kita buat tadi dengan menjalankan perintah berikut di Service :
+```
+mysql -u root -padmin < /vagrant/config/service/init/addition_to_sys.sql
+```
+Setelah anda menjalankan perintah diatas, seharusnya Service sudah bisa mendukung fungsi-fungsi yang dimiliki oleh ProxySQL. Lalu perintah selanjutnya adalah :
+```
+mysql -u root -padmin < /vagrant/config/service/init/connect-proxy.sql
+```
+Pada intinya, file tersebut akan membuat User yang nantinya akan digunakan oleh ProxySQL untuk mengakses sebuah database yang telah kita deklarasikan pada Service yaitu `percobaan_cluster`. Untuk itu kita akan menggunakan database yang telah kita buat pada tahap **2.3.4**. Contohnya perintahnya sebagai berikut:
+```
+CREATE USER 'mysqlcluster'@'%' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES on percobaan_cluster.* to 'mysqlcluster'@'%';
+FLUSH PRIVILEGES;
+```
+
+#### 2.4.5 Daftarkan Service ke ProxySQL
+Setelah Service dapat mendukung fungsi ProxySQL kita harus mengupdate variabel terkait. Sama seperti pada tahap **2.4.3**
+```
+UPDATE global_variables SET variable_value='monitor' WHERE variable_name='mysql_monitor';
+LOAD MYSQL VARIABLES TO RUNTIME;
+SAVE MYSQL VARIABLES TO DISK;
+```
+
+Selanjutnya, tambahkan Service kedalam daftar server yang akan ditangani oleh ProxySQL dengan syntax berikut :
+```
+INSERT INTO mysql_group_replication_hostgroups (writer_hostgroup, backup_writer_hostgroup, reader_hostgroup, offline_hostgroup, active, max_writers, writer_is_also_reader, max_transactions_behind) VALUES (2, 4, 3, 1, 1, 3, 1, 100);
+
+INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '192.168.31.101', 3306);
+INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '192.168.31.102', 3306);
+
+LOAD MYSQL SERVERS TO RUNTIME;
+SAVE MYSQL SERVERS TO DISK;
+```
+#### 2.4.6 Buat User di ProxySQL agar dapat Diakses oleh Apps
+Langkah selanjutnya buat sebuah user pada ProxySQL untuk mengaksesnya melalui Applikasi.
+```
+INSERT INTO mysql_users(username, password, default_hostgroup) VALUES ('mysqlcluster', 'admin', 2);
+LOAD MYSQL USERS TO RUNTIME;
+SAVE MYSQL USERS TO DISK;
+```
 ## 3. Testing
