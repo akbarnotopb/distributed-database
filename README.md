@@ -14,7 +14,7 @@ Untuk semua password instalasi MySQL dalam tutorial kali ini adalah `admin` , ub
    2. [Installing Datanode](#22-installing-datanode)
    3. [Installing Service](#23-installing-service)
    4. [Installing ProxySQL / Load Balancer](#24-installing-proxysql)
-3. [Testing](#3-testing)
+3. [Testing with HeidiSQL](#3-testing)
 
 
 ## Pre-Requisites
@@ -25,6 +25,8 @@ Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut ada
 3. Virtualbox ready-installed
 4. Ubuntu basic scripting
 5. Ubuntu Bento 16.04 64bit box
+6. HeidiSQL
+7. [Sample Dataset](http://www.mysqltutorial.org/mysql-sample-database.aspx)
 
 ## Arsitektur
 Dalam tutorial kali ini saya menggunakan **7 buah** server dengan detail sebagai berikut :
@@ -39,7 +41,8 @@ Dalam tutorial kali ini saya menggunakan **7 buah** server dengan detail sebagai
 | 6 | 192.168.31.149 | data2 | Sebagai DataNode - 2 |
 | 7 | 192.168.31.150 | data3 | Sebagai DataNode - 3 |
 
-Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai bahan *provisioning* ke semua VM dan detail konfigurasi tiap-tiap VM terdapat pada `vagrantfile`.
+Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai bahan *provisioning* ke semua VM dan detail konfigurasi tiap-tiap VM terdapat pada `vagrantfile`. Berikut gambar arsitektur yang telah terbuat yang dilihat dari Service API menggunakan console command `ndb_mgm` 
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/ndb_mgm_show.png)
 
 ## 1. Initiating Machine
 Untuk membuat ke-7 server , disini kita hanya perlu melakukan *command* berikut pada direktori dimana *vagrantfile* tersimpan.
@@ -92,7 +95,7 @@ Selanjutnya lakukan konfigurasi pada file `config.ini` yang akan kita simpan di 
 sudo mkdir /var/lib/mysql-cluster
 sudo cp /vagrant/config/manager/config.ini /var/lib/mysql-cluster
 ```
-Pada [file](https://github/abaar/distributed-database) `config.ini` , terdapat beberapa konfigurasi yaitu :
+Pada [file](https://github.com/abaar/distributed-database/tree/master/config/manager/config.ini) `config.ini` , terdapat beberapa konfigurasi yaitu :
 ```
 ...
 [ndbd default]
@@ -144,6 +147,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable ndb_mgmd
 sudo systemctl start ndb_mgmd
 ```
+Jika berhasil tersintall, maka ketika menjalankan perintah `systemctl status ndb_mgmd` akan keluar `status` sebagai berikut:
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/manager_succeed.PNG)
+
 
 ### 2.2 Installing Datanode
 Hampir sama dengan cara instalasi Manager, hanya saja file konfigurasi datanode sedikit berbeda. Langkah-langkahnya sebagai berikut
@@ -168,7 +174,7 @@ Karena file telah saya siapkan , maka tinggal jalankan perintah berikut :
 sudo cp /vagrant/config/datanode/my.cnf /etc/my.cnf
 sudo mkdir -p /usr/local/mysql/data #Buat folder untuk menyimpan data
 ```
-Adapun file `my.cnf` hanya berisi alamat Manager yang telah kita buat tadi.
+Adapun [file](https://github.com/abaar/distributed-database/tree/master/config/datanode/my.cnf) `my.cnf` hanya berisi alamat Manager yang telah kita buat tadi.
 ```
 [mysql_cluster]
 # Options for NDB Cluster processes:
@@ -190,7 +196,8 @@ sudo systemctl daemon-reload
 sudo systemctl enable ndbd
 sudo systemctl start ndbd
 ```
-
+Jika berhasil tersintall, maka ketika menjalankan perintah `systemctl status ndbd` akan keluar `status` sebagai berikut:
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/data1_succeed.PNG)
 
 ### 2.3 Installing Service
 Seperti yang telah dijelaskan pada point **2** bahwa ketika menjalankan `vagrant up` node manager dan data akan terbuat, sedangkan node Service belum, meskipun beberapa konfigurasi telah dilakukan, akan tetapi ada beberapa hal yang perlu dijalankan dimulai dari **2.3.2**.
@@ -259,19 +266,20 @@ Cobalah jalankan perintah ini pada salah satu console VM Service
 ndb_mgm
 ```
 Kemudian jalankan perintah `SHOW` , maka akan muncul daftar Node yang terkoneksi seperti pada gambar dibawah.
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/ndb_mgm_show.png)
 
 Engine Status pada Service1
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/enginestatus_service1.png)
 
 Engine Status pada Service2
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/enginestatus_service2.png)
 
 Creating Database At Service2
-[alt text](https://github.com/abaar/distributed-database)
+
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/create_coba2_service2.PNG)
 
 Showing databases At Service1
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/create_coba2_service1.PNG)
 
 ### 2.4 Installing ProxySQL
 #### 2.4.1 Update & Install Dependencies
@@ -303,6 +311,8 @@ sudo ufw allow 3306
 sudo systemctl start proxysql
 sudo systemctl status proxysql
 ```
+Jika berhasil terinstall, maka seharusnya ProxySQL akan mengeluarkan `status` seperti berikut.
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/proxy_succeed.PNG)
 
 #### 2.4.3 Konfigurasi ProxySQL
 Untuk mengatur konfigurasi ProxySQL, anda perlu menjalankan perintah berikut untuk memasuki *Admin* pada ProxySQL.
@@ -363,5 +373,4 @@ SAVE MYSQL USERS TO DISK;
 ## 3. Testing
 Pada kali ini kita akan mencoba mengetes menggunakan HeidiSQL sebagai *tools* pengaksesan ProxySQL dan Import sebuah file dataset dari MySQL. **Jangan lupa untuk mengubah semua Engine pada file SQL yang akan kita import dengan NDB**.
 Setelah kita Run menggunakan HeidiSQL, maka dapat kita lihat hasilnya bahwa database telah terbuat pada service1 dan service2
-[alt text](https://github.com/abaar/distributed-database)
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/heidisql.PNG)
