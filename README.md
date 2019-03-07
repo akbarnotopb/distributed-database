@@ -351,3 +351,7 @@ LOAD MYSQL USERS TO RUNTIME;
 SAVE MYSQL USERS TO DISK;
 ```
 ## 3. Testing
+Pada kali ini kita akan mencoba mengetes menggunakan HeidiSQL sebagai *tools* pengaksesan ProxySQL dan Import sebuah file dataset dari MySQL. **Jangan lupa untuk mengubah semua Engine pada file SQL yang akan kita import dengan NDB**.
+Setelah kita Run menggunakan HeidiSQL, maka dapat kita lihat hasilnya bahwa database telah terbuat pada service1 dan service2
+[alt text](https://github.com/abaar/distributed-database)
+[alt text](https://github.com/abaar/distributed-database)
