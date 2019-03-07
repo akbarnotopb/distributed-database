@@ -115,7 +115,7 @@ NodeId=#id Node
 ```
 Sama seperti datanode, apabila anda ingin membuat 2 atau lebih service , maka deklarasikan `[mysqld]` sesuai banyak service yang anda inginkan.
 
-#### 2.1.3 Running Manager
+#### 2.1.3 Jalankan Manager
 Untuk menjalankan service manager, jalankan perintah berikut:
 ```
 sudo ndb_mgmd -f /var/lib/mysql-cluster/config.ini
@@ -125,8 +125,57 @@ Maka, seharusnya anda akan melihat notifikasi bahwa manager berhasil dijalankan
 #### 2.1.4 Membuat Manager Berjalan ketika Booting
 Tidak banyak yang bisa saya jelaskan disini, intinya dengan menjalankan syntax berikut , manager akan berjalan ketika booting dengan memasukkannya kedalam service. Kebetulan syntax tersebut sudah saya siapkan dalam folder `config/manager/ndb_mgmd.service`
 ```
+sudo pkill -f ndb_mgmd #Matikan Manager yang sedang berjalan agar tidak terjadi error
 sudo cp /vagrant/config/manager/ndb_mgmd.service /etc/systemd/system/ndb_mgmd.service
 sudo systemctl daemon-reload
 sudo systemctl enable ndb_mgmd
 sudo systemctl start ndb_mgmd
 ```
+
+### 2.2 Install Datanode
+Hampir sama dengan cara instalasi Manager, hanya saja file konfigurasi datanode sedikit berbeda. Langkah-langkahnya sebagai berikut
+#### 2.2.1 Update & Install Dependencies
+Jalankan perintah berikut untuk mengupdate dan instalasi dependensi yang dibutuhkan oleh Datanode
+```
+sudo apt update -y
+sudo apt install libclass-methodmaker-perl -y
+```
+#### 2.2.2 Instalasi Datanode
+Sama seperti sebelumnya, copy dan install debian packagenya.
+```
+#copy
+sudo cp /vagrant/resource/mysql-cluster-datanode.deb ~
+#install
+sudo dpkg -i ~/mysql-cluster-datanode.deb
+```
+
+#### 2.2.3 Konfigurasi Datanode
+Karena file telah saya siapkan , maka tinggal jalankan perintah berikut :
+```
+sudo cp /vagrant/config/datanode/my.cnf /etc/my.cnf
+sudo mkdir -p /usr/local/mysql/data #Buat folder untuk menyimpan data
+```
+Adapun file `my.cnf` hanya berisi alamat Manager yang telah kita buat tadi.
+```
+[mysql_cluster]
+# Options for NDB Cluster processes:
+ndb-connectstring=192.168.31.100  # location of cluster manager
+```
+
+#### 2.2.4 Jalankan Datanode
+Untuk menjalankan datanode cukup dengan syntax berikut :
+```
+sudo ndbd
+```
+
+#### 2.2.5 Buatkan Service untuk Datanode agar Dapat Berjalan ketika Booting
+Tidak ada yang perlu dijelaskan , karena pada dasarnya mirip sekali dengan step **2.1.4***
+```
+sudo pkill -f ndbd
+sudo cp /vagrant/config/datanode/ndbd.service /etc/systemd/system/ndbd.service
+sudo systemctl daemon-reload
+sudo systemctl enable ndbd
+sudo systemctl start ndbd
+```
+
+
