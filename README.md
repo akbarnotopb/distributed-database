@@ -33,7 +33,7 @@ Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai b
 ## 1. Initiating Machine
 Untuk membuat ke-6 server , disini kita hanya perlu melakukan *command* berikut pada direktori dimana *vagrantfile* tersimpan.
 ```
-$ vagrant up
+vagrant up
 ```
 
 ### 1.1 Config 
@@ -181,11 +181,59 @@ sudo systemctl start ndbd
 
 
 ### 2.3 Instalasi Service
+Seperti yang telah dijelaskan pada point **2** bahwa ketika menjalankan `vagrant up` node manager dan data akan terbuat, sedangkan node Service belum, meskipun beberapa konfigurasi telah dilakukan, akan tetapi ada beberapa hal yang perlu dijalankan dimulai dari **2.3.2**.
 #### 2.3.1 Update & Install Dependencies
+Lakukan update dan install keperluan untuk menjalankan service
+```
+sudo apt update -y
+sudo apt install libaio1 libmecab2 -y
+```
 
-#### 2.3.2 Instalasi Service
+##### 2.3.1.1 Instalasi Dependencies
+Pertama-tama copy file dari file yang telah saya siapkan pada `resource/service/` ke dalam folder `/install/` untuk mempermudah manajemen filenya.
+```
+sudo mkdir -p install
+sudo cp /vagrant/resource/service/* ~/install/
+```
+Kemudian lakukan installasi dependencies dengan menjalankan perintah berikut :
+```
+sudo dpkg -i install/mysql-cluster-common.deb
+sudo dpkg -i install/mysql-cluster-community-client.deb
+sudo dpkg -i install/mysql-cluster-client.deb
+```
+
+#### 2.3.2 Install Service
+Untuk menginstall service anda perlu menginstall dependecies MySQL Cluster Community Server.
+```
+sudo dpkg -i install/mysql-cluster-community-server.deb
+```
+Anda akan diminta untuk mengisi password ketika menginstall dependensi ini, tutorial kali ini password yang digunakan adalah `admin`.
+
+Lalu anda perlu menginstall service dengan menjalankan syntax berikut :
+```
+sudo dpkg -i install/mysql-cluster-server.deb
+```
+Setelah itu lakukan konfigurasinya , karena file telah saya siapkan , anda cukup menjalankan :
+```
+sudo cp /vagrant/config/service/1/my.cnf /etc/mysql/
+```
+Sebenarnya , anda hanya perlu **menambahkan** konfigurasi berikut kedalam file `my.cnf` yang telah ada :
+```
+[mysqld]
+# Options for mysqld process:
+ndbcluster                      # run NDB storage engine
+bind-address=#IP Service Saat ini
+[mysql_cluster]
+# Options for NDB Cluster processes:
+ndb-connectstring=#IP Manager  # location of management server
+```
 
 #### 2.3.3 Jalankan Service
+Lalu coba jalankan service dengan syntax berikut :
+```
+sudo systemctl restart mysql
+sudo systemctl enable mysql
+```
 
 #### 2.3.4 Percobaan Service
 
