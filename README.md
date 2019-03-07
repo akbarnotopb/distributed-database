@@ -10,7 +10,7 @@ Untuk semua password instalasi MySQL dalam tutorial kali ini adalah `admin` , ub
 ## Jump-To
 ### 1.
 ### 2.
-### 3. [Testing](#3-testing)
+### 3. [Testing](#3-testing-1)
 
 
 ## Pre-Requisites
