@@ -2,6 +2,10 @@
 
 Dalam kesempatan kali ini saya akan membagikan cara bagaimana menginstall MySQL Cluster Multi Node dengan Load Balancer ProxySQL. 
 
+## Catatan Penulis
+Disini saya akan menggunakan istilah `server` dengan kata VM (Virtual Machine) karena memang dalam contoh instalasi kali ini dilakukan dalam mesin lokal, dan mengganti istilah server (API) dengan kata `service` agar tidak terjadi kebingungan. Serta **semua file yang telah disediakan pada GIT ini merupakan versi MySQL Cluster yang telah sesuai dengan versi OS Ubuntu 16.04**, hanya saja nama filenya diubah untuk memudahkan pembacaan. Adapun versi MySQL Cluster yang digunakan adalah 7.6.9 . Apabila anda ingin mengganti sesuai versi OS anda , anda bisa download file nya [disini](https://dev.mysql.com/downloads/cluster/). Atau apabila anda menggunakan Ubuntu 18.04 ada sebuah tutorial berbahasa inggris yang cukup jelas [disini](https://www.digitalocean.com/community/tutorials/how-to-create-a-multi-node-mysql-cluster-on-ubuntu-18-04).
+
+
 ## Pre-Requisites
 Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut adalah hal-hal yang perlu diketahui untuk melanjutkan ke tahap selanjutnya. Untuk virtual machine sebenarnya dapat menggunakan provider lainnya, hanya saja disini saya menggunakan Virtualbox.
 
@@ -9,6 +13,7 @@ Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut ada
 2. Vagrant basic Knowledge
 3. Virtualbox ready-installed
 4. Ubuntu basic scripting
+5. Ubuntu Bento 16.04 64bit box
 
 ## Arsitektur
 Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai berikut :
@@ -22,14 +27,106 @@ Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai
 | 5 | 192.168.31.148 | data1 | Sebagai DataNode - 1 |
 | 6 | 192.168.31.149 | data2 | Sebagai DataNode - 2 |
 
-Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai bahan *provisioning* ke semua server.
+Detail hostname ini saya simpan di file `config/hosts` untuk digunakan sebagai bahan *provisioning* ke semua VM dan detail konfigurasi tiap-tiap VM terdapat pada `vagrantfile`.
 
-## Installing
+## 1. Initiating Machine
 Untuk membuat ke-6 server , disini kita hanya perlu melakukan *command* berikut pada direktori dimana *vagrantfile* tersimpan.
 ```
 $ vagrant up
 ```
 
-### Config 
-Setelah menjalankan *command* diatas, akan terbuat 6 buah server beserta *provisioning*-nya.
-#### Provisioning
+### 1.1 Config 
+Setelah menjalankan *command* diatas, akan terbuat 6 buah server dengan konfigurasi yang telah ditentukan dalam file `vagrantfile` beserta *provisioning*-nya. Sebagai contoh untuk mengatur hostname dan IP seperti kode berikut :
+```
+manager.vm.hostname = "manager"
+manager.vm.network "private_network", ip: "192.168.31.100"
+```
+#### 1.1.1 Provisioning
+Provisioning saya lakukan dengan memecahnya menjadi 2 bagian , yaitu provisioning umum dan provisioning khusus bagi tiap-tiap VM sesuai *role* masing-masing, sebagai contoh provisioning untuk manager :
+```
+manager.vm.provision "shell", path: "provision/bootstrap.sh", privileged: false
+manager.vm.provision "shell", path: "provision/bootstrap-manager.sh", privileged: false
+```
+
+File `bootstrap.sh` akan dijalankan disemua Node karena perintah yang dijalankan merupakan perintah umum, yaitu untuk meng-update, copy alamat hosts , dan mengizinkan tiap-tiap node saling berkomunikasi dengan *syntax* berikut :
+```
+sudo apt-get update -y
+
+sudo cp /vagrant/config/hosts /etc/hosts
+
+sudo ufw allow from 192.168.31.100
+sudo ufw allow from 192.168.31.101
+sudo ufw allow from 192.168.31.102
+sudo ufw allow from 192.168.31.148
+sudo ufw allow from 192.168.31.149
+sudo ufw allow from 192.168.31.192
+```
+Adapun detail provisioning yang dilakukan ada di folder `config/provision/`.
+
+## 2. Installing
+Apabila anda menggunakan template vagrant pada GIT ini, maka ketika anda menjalankan `vagrant up` , secara otomatis **Node manager, data1 , data2** sudah **siap digunakan** karena semua konfigurasi telah dilakukan ketika provisioning melalui file konfigurasi yang biasa disebut *bootstrap* seperti yang telah dijelaskan di bagian **1.1.1 Provisioning**. Akan tetapi disini saya akan mencoba menjelaskan kembali point-point penting apa yang harus dilakukan.
+
+### 2.1 Installing Manager
+#### 2.1.1 Install package Manager
+Langkah pertama yang anda harus lakukan adalah mendownload debian package MySQL Cluster Management. Karena telah saya sediakan pada folder `resource/` , cukup copy file management package ke dalam VM dan install dengan syntax :
+```
+sudo cp /vagrant/resource/mysql-cluster-management.deb ~
+sudo dpkg -i ~/mysql-cluster-management.deb
+```
+#### 2.1.2 Konfigurasi
+Selanjutnya lakukan konfigurasi pada file `config.ini` yang akan kita simpan di folder `/var/lib/mysql-cluster/`. Karena file `config.ini` telah saya sediakan sesuai dengan arsitektur yang akan kita buat, maka jalankan perintah berikut :
+```
+sudo mkdir /var/lib/mysql-cluster
+sudo cp /vagrant/config/manager/config.ini /var/lib/mysql-cluster
+```
+Pada [file](https://github/abaar/distributed-database) `config.ini` , terdapat beberapa konfigurasi yaitu :
+```
+...
+[ndbd default]
+NoOfReplicas=2 
+...
+```
+Syntax tersebut merupakan konfigurasi berapa jumlah replikasi yang akan ada di Datanode, Isilah dengan angka, sebaiknya tidak lebih dari jumlah Datanode.
+```
+...
+[ndb_mgmd]
+hostname=#IPADDRESS Manager
+datadir=#Direktori penyimpanan
+...
+```
+Merupakan konfigurasi Manager, tidak banyak yang perlu dijelaskan...
+```
+...
+[ndbd]
+hostname=#IPADDDRESS Datanode 
+NodeId=#id node
+datadir=#Direktori penyimpanan
+
+...
+```
+Apabila anda ingin membuat 2 atau lebih datanode maka deklarasikan `[ndbd]` sesuai banyak datanode yang anda inginkan.
+
+```
+...
+[mysqld]
+hostname=#IPADDRESS Service
+NodeId=#id Node
+...
+```
+Sama seperti datanode, apabila anda ingin membuat 2 atau lebih service , maka deklarasikan `[mysqld]` sesuai banyak service yang anda inginkan.
+
+#### 2.1.3 Running Manager
+Untuk menjalankan service manager, jalankan perintah berikut:
+```
+sudo ndb_mgmd -f /var/lib/mysql-cluster/config.ini
+```
+Maka, seharusnya anda akan melihat notifikasi bahwa manager berhasil dijalankan
+
+#### 2.1.4 Membuat Manager Berjalan ketika Booting
+Tidak banyak yang bisa saya jelaskan disini, intinya dengan menjalankan syntax berikut , manager akan berjalan ketika booting dengan memasukkannya kedalam service. Kebetulan syntax tersebut sudah saya siapkan dalam folder `config/manager/ndb_mgmd.service`
+```
+sudo cp /vagrant/config/manager/ndb_mgmd.service /etc/systemd/system/ndb_mgmd.service
+sudo systemctl daemon-reload
+sudo systemctl enable ndb_mgmd
+sudo systemctl start ndb_mgmd
+```
