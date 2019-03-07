@@ -13,7 +13,7 @@ Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut ada
 ## Arsitektur
 Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai berikut :
 | No | IP Address | Hostname | Deskripsi |
-| --- | ---| --- | --- | --- |
+| --- | --- | --- | --- |
 | 1 | 192.168.31.100 | manager | Sebagai Node Manager |
 | 2 | 192.168.31.192 | proxy | Sebagai Load Balancer (ProxySQL) |
 | 3 | 192.168.31.101 | service1 | Sebagai Server 1 (API-1) |
