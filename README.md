@@ -5,6 +5,7 @@ Dalam kesempatan kali ini saya akan membagikan cara bagaimana menginstall MySQL 
 ## Catatan Penulis
 Disini saya akan menggunakan istilah `server` dengan kata VM (Virtual Machine) karena memang dalam contoh instalasi kali ini dilakukan dalam mesin lokal, dan mengganti istilah server (API) dengan kata `service` agar tidak terjadi kebingungan. Serta **semua file yang telah disediakan pada GIT ini merupakan versi MySQL Cluster yang telah sesuai dengan versi OS Ubuntu 16.04**, hanya saja nama filenya diubah untuk memudahkan pembacaan. Adapun versi MySQL Cluster yang digunakan adalah 7.6.9 . Apabila anda ingin mengganti sesuai versi OS anda , anda bisa download file nya [disini](https://dev.mysql.com/downloads/cluster/). Atau apabila anda menggunakan Ubuntu 18.04 ada sebuah tutorial berbahasa inggris yang cukup jelas [disini](https://www.digitalocean.com/community/tutorials/how-to-create-a-multi-node-mysql-cluster-on-ubuntu-18-04).
 
+Untuk semua password instalasi MySQL dalam tutorial kali ini adalah `admin` , ubahlah sesuai kebutuhan anda.
 
 ## Pre-Requisites
 Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut adalah hal-hal yang perlu diketahui untuk melanjutkan ke tahap selanjutnya. Untuk virtual machine sebenarnya dapat menggunakan provider lainnya, hanya saja disini saya menggunakan Virtualbox.
@@ -169,7 +170,7 @@ sudo ndbd
 ```
 
 #### 2.2.5 Buatkan Service untuk Datanode agar Dapat Berjalan ketika Booting
-Tidak ada yang perlu dijelaskan , karena pada dasarnya mirip sekali dengan step **2.1.4***
+Tidak ada yang perlu dijelaskan , karena pada dasarnya mirip sekali dengan step **2.1.4**
 ```
 sudo pkill -f ndbd
 sudo cp /vagrant/config/datanode/ndbd.service /etc/systemd/system/ndbd.service
@@ -179,3 +180,23 @@ sudo systemctl start ndbd
 ```
 
 
+### 2.3 Instalasi Service
+#### 2.3.1 Update & Install Dependencies
+
+#### 2.3.2 Instalasi Service
+
+#### 2.3.3 Jalankan Service
+
+#### 2.3.4 Percobaan Service
+
+### 2.4 Instalasi ProxySQL
+#### 2.4.1 Update & Install Dependencies
+
+#### 2.4.2 Instalasi ProxySQL
+#### 2.4.3 Konfirugari ProxySQL
+#### 2.4.4 Hubungkan Service dengan ProxySQL
+#### 2.4.5 Daftarkan Service ke ProxySQL
+#### 2.4.6 Buat User di Service agar dapat Diakses oleh ProxySQL
+#### 2.4.7 Buat User di ProxySQL agar dapat Diakses oleh Apps
+
+## 3. Testing
