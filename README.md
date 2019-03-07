@@ -235,13 +235,64 @@ sudo systemctl restart mysql
 sudo systemctl enable mysql
 ```
 
+Sebelum mencoba service , maka buka port yang digunakan oleh MySQL Cluster dengan syntax berikut :
+```
+sudo ufw allow 33061
+sudo ufw allow 3306
+```
+
 #### 2.3.4 Percobaan Service
+Cobalah jalankan perintah ini pada salah satu console VM Service
+```
+ndb_mgm
+```
+Kemudian jalankan perintah `SHOW` , maka akan muncul daftar Node yang terkoneksi seperti pada gambar dibawah.
+[alt text](https://github.com/abaar/distributed-database)
+
+Engine Status pada Service1
+[alt text](https://github.com/abaar/distributed-database)
+
+Engine Status pada Service2
+[alt text](https://github.com/abaar/distributed-database)
+
+Creating Database At Service2
+[alt text](https://github.com/abaar/distributed-database)
+
+Showing databases At Service1
+[alt text](https://github.com/abaar/distributed-database)
 
 ### 2.4 Instalasi ProxySQL
 #### 2.4.1 Update & Install Dependencies
+Seperti langkah-langkah sebelumnya, untuk memulai instalasi maka instal-lah terlebih dahulu lib yang dibutuhkan ProxySQL dengan syntax berikut :
+```
+sudo apt-get install libaio1 -y
+sudo apt-get install libmecab2 -y
+```
 
 #### 2.4.2 Instalasi ProxySQL
-#### 2.4.3 Konfirugari ProxySQL
+Karena saya tidak menyiapkan debian package untuk instalasi ProxySQL maka download file tersebut, dalam tutorial ini kita akan simpan file tersebut dalam folder `/tmp`, setelah download maka lakukan instalasi seperti biasa
+```
+cd /tmp
+curl -OL https://github.com/sysown/proxysql/releases/download/v1.4.4/proxysql_1.4.4-ubuntu16_amd64.deb
+curl -OL https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-common_5.7.23-1ubuntu16.04_amd64.deb
+curl -OL https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-community-client_5.7.23-1ubuntu16.04_amd64.deb
+curl -OL https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-client_5.7.23-1ubuntu16.04_amd64.deb
+
+sudo dpkg -i proxysql_1.4.4-ubuntu16_amd64.deb
+sudo dpkg -i mysql-common_5.7.23-1ubuntu16.04_amd64.deb
+sudo dpkg -i mysql-community-client_5.7.23-1ubuntu16.04_amd64.deb
+sudo dpkg -i mysql-client_5.7.23-1ubuntu16.04_amd64.deb
+```
+Kemudian coba jalankan ProxySQL dan jangan lupa untuk membuka port yang dipakai.
+```
+sudo ufw allow 33061
+sudo ufw allow 3306
+
+sudo systemctl start proxysql
+sudo systemctl status proxysql
+```
+
+#### 2.4.3 Konfigurasi ProxySQL
 #### 2.4.4 Hubungkan Service dengan ProxySQL
 #### 2.4.5 Daftarkan Service ke ProxySQL
 #### 2.4.6 Buat User di Service agar dapat Diakses oleh ProxySQL
