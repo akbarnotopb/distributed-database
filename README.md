@@ -8,9 +8,13 @@ Disini saya akan menggunakan istilah `server` dengan kata VM (Virtual Machine) k
 Untuk semua password instalasi MySQL dalam tutorial kali ini adalah `admin` , ubahlah sesuai kebutuhan anda.
 
 ## Jump-To
-### 1.
-### 2.
-### 3. [Testing](#3-testing-1)
+1. [Initiating Machine](#1-initiating-machine)
+2. [Installing](#2-installing)
+   1. [Installing Manager](#21-installing-manager)
+   2. [Installing Datanode](#22-installing-datanode)
+   3. [Installing Service](#23-installing-service)
+   4. [Installing ProxySQL / Load Balancer](#24-installing-proxysql)
+3. [Testing](#3-testing)
 
 
 ## Pre-Requisites
@@ -141,7 +145,7 @@ sudo systemctl enable ndb_mgmd
 sudo systemctl start ndb_mgmd
 ```
 
-### 2.2 Install Datanode
+### 2.2 Installing Datanode
 Hampir sama dengan cara instalasi Manager, hanya saja file konfigurasi datanode sedikit berbeda. Langkah-langkahnya sebagai berikut
 #### 2.2.1 Update & Install Dependencies
 Jalankan perintah berikut untuk mengupdate dan instalasi dependensi yang dibutuhkan oleh Datanode
@@ -188,7 +192,7 @@ sudo systemctl start ndbd
 ```
 
 
-### 2.3 Instalasi Service
+### 2.3 Installing Service
 Seperti yang telah dijelaskan pada point **2** bahwa ketika menjalankan `vagrant up` node manager dan data akan terbuat, sedangkan node Service belum, meskipun beberapa konfigurasi telah dilakukan, akan tetapi ada beberapa hal yang perlu dijalankan dimulai dari **2.3.2**.
 #### 2.3.1 Update & Install Dependencies
 Lakukan update dan install keperluan untuk menjalankan service
@@ -269,7 +273,7 @@ Creating Database At Service2
 Showing databases At Service1
 [alt text](https://github.com/abaar/distributed-database)
 
-### 2.4 Instalasi ProxySQL
+### 2.4 Installing ProxySQL
 #### 2.4.1 Update & Install Dependencies
 Seperti langkah-langkah sebelumnya, untuk memulai instalasi maka instal-lah terlebih dahulu lib yang dibutuhkan ProxySQL dengan syntax berikut :
 ```
