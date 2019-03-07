@@ -7,6 +7,12 @@ Disini saya akan menggunakan istilah `server` dengan kata VM (Virtual Machine) k
 
 Untuk semua password instalasi MySQL dalam tutorial kali ini adalah `admin` , ubahlah sesuai kebutuhan anda.
 
+## Jump-To
+### 1.
+### 2.
+### 3. [Testing](##3.-Testing)
+
+
 ## Pre-Requisites
 Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut adalah hal-hal yang perlu diketahui untuk melanjutkan ke tahap selanjutnya. Untuk virtual machine sebenarnya dapat menggunakan provider lainnya, hanya saja disini saya menggunakan Virtualbox.
 
@@ -38,7 +44,7 @@ vagrant up
 ```
 
 ### 1.1 Config 
-Setelah menjalankan *command* diatas, akan terbuat 6 buah server dengan konfigurasi yang telah ditentukan dalam file `vagrantfile` beserta *provisioning*-nya. Sebagai contoh untuk mengatur hostname dan IP seperti kode berikut :
+Setelah menjalankan *command* diatas, akan terbuat 7 buah server dengan konfigurasi yang telah ditentukan dalam file `vagrantfile` beserta *provisioning*-nya. Sebagai contoh untuk mengatur hostname dan IP seperti kode berikut :
 ```
 manager.vm.hostname = "manager"
 manager.vm.network "private_network", ip: "192.168.31.100"
