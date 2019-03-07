@@ -337,7 +337,7 @@ mysql -u admin -p -h 127.0.0.1 -P 6032 --prompt='ProxySQLAdmin> '
 ```
 Maka anda akan memasuki sebuah Console seperti gambar berikut :
 
-[alt text](https://github.com/abaar/distributed-database)
+![alt text](https://github.com/abaar/distributed-database/blob/master/screenshoot/proxy_console_admin.PNG)
 
 
 Lalu , perintah yang anda perlu jalankan untuk mengupdate password ProxySQL adalah :
