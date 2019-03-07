@@ -12,6 +12,7 @@ Saya menggunakan Vagrant sebagai *Tools* untuk *provisioning* , jadi berikut ada
 
 ## Arsitektur
 Dalam tutorial kali ini saya menggunakan **6 buah** server dengan detail sebagai berikut :
+
 | No | IP Address | Hostname | Deskripsi |
 | --- | --- | --- | --- |
 | 1 | 192.168.31.100 | manager | Sebagai Node Manager |
