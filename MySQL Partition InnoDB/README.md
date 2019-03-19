@@ -1,5 +1,17 @@
 # Menggunakan MySQL Partition pada InnoDB
 
+## Jumpto
+1. [Memulai Contoh Partisi Create & Insert](#memulai-create-table-dengan-masing-masing-metode-partisi)
+   1. [Range Partition](#range-partition)
+   2. [List Partition](#list-partition)
+   3. [Hash Partition](#hash-partition)
+   4. [Key Partition](#key-partition)
+2. [A Typical Use Case: Time Series Data](#a-typical-use-case-time-series-data)
+   1. [Import](#import)
+   2. [Explain](#explain)
+   3. [Select and Benchmark](#select)
+   4. [Delete and Benchmark](#big-delete)
+
 ## Pre-Requisites
 1. MySQL Installed
 2. Ekstensi `PARTITION` ada dan aktif
@@ -31,7 +43,7 @@ CREATE TABLE serverlogs4 (
 PARTITION BY KEY();
 ```
 
-## Memulai Create Table dengan Masing-Masing Metode Partisi
+## Memulai Create Table dengan Masing Masing Metode Partisi
 Semua code `create table` dan `insert` data ada [disini](https://github.com/abaar/distributed-database/blob/master/MySQL%20Partition%20InnoDB/Resource/bdt.sql)
 
 ### >Range Partition
