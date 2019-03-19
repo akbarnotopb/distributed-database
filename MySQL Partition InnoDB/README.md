@@ -215,6 +215,21 @@ INSERT INTO rc1_key (a,b) VALUES (6,11);
 
 ## A Typical Use Case: Time Series Data
 ### Import
+Lakukan import data +-(40MB) yang bisa anda dapatkan di halaman [berikut](https://www.vertabelo.com/blog/technical-articles/everything-you-need-to-know-about-mysql-partitions)
+
 ### Explain
+Untuk melihat plan eksekusi anda dapat menjalankannya dengan perintah `EXPLAIN` seperti gambar berikut :
+![explain big query](https://github.com/abaar/distributed-database/blob/master/MySQL%20Partition%20InnoDB/Resource/Screenshoot/explain_benchmark.PNG)
+
+![explain big delete](https://github.com/abaar/distributed-database/blob/master/MySQL%20Partition%20InnoDB/Resource/Screenshoot/explain_benchmark_delete.PNG)
+
 ### Select
+Benchmark / Perbandigan kecepatan `SELECT` pada kedua table `measure` yang ter-partisi dengan yang tidak dapat dilihat di gambar berikut.
+
+![benchmark select](https://github.com/abaar/distributed-database/blob/master/MySQL%20Partition%20InnoDB/Resource/Screenshoot/benchmark%20select.PNG)
+
 ### Big Delete
+Benchmark / Perbandigan kecepatan `DELETE` pada kedua table `measure` yang ter-partisi dengan yang tidak dapat dilihat di gambar berikut.
+
+![benchmark delete](https://github.com/abaar/distributed-database/blob/master/MySQL%20Partition%20InnoDB/Resource/Screenshoot/benchmark_delete.PNG)
+
