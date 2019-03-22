@@ -148,6 +148,11 @@ Tambahkan `%Jmeter%/bin` agar dapat mengakses Jmeter dari CMD tanpa harus pindah
 ![add env](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/add_environmet.PNG)
 
 #### 4. Jalankan
+Jalankan Jmeter dengan perintah
+```
+Jmeter
+```
+pada command prompt anda / jalankan `Jmeter.bat` di direktori `/bin` dimana anda menginstallnya.
 
 ![launching jmeter](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/launced.PNG)
 
