@@ -121,4 +121,18 @@ Vagrant.configure("2") do |config|
     proxy.vm.provision "shell", path: "provision/bootstrap-proxy.sh", privileged: false
   end
 
+  config.vm.define "app1" do |app1|
+    app1.vm.box="bento/ubuntu-16.04"
+    app1.vm.hostname="app1"
+    
+    app1.vm.provider "virtualbox" do |vb|
+      vb.gui=false
+      vb.name="app1-bdt"
+      vb.memory="1536"
+    end
+  
+    app1.vm.network "private_network", ip: "192.168.31.232"
+    app1.vm.provision "shell", path: "provision/application-layer/bootstrap.sh", privileged:false
+    app1.vm.provision "shell", path: "provision/application-layer/bootstrap-app1.sh", privileged:false
+  end
 end
