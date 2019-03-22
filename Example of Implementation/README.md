@@ -49,7 +49,7 @@ sudo apt-get install php7.0 php7.0-mysql libapache2-mod-php7.0 php7.0-cli php7.0
 ```
 Seharusnya `APACHE` telah terinstall, jalankan `sudo systemctl status apache2` dan cek apakah hasil yang dikeluarkan sama dengan foto berikut.
 
-![foto status apache]()
+![foto status apache](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/apache2_succeed.PNG)
 
 #### 2. Update hosts pada `app1`
 ```
@@ -119,19 +119,42 @@ Tahap selanjutnya adalah menginstall melalui web browser, akseslah wordpress den
 
 Yang hanya lakukan hanya klik `next` sampai masuk kehalaman `DASHBOARD` seperti halaman berikut :
 
-![homepage]()
+![homepage](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/homepage_succeed.PNG)
 
 #### 11. Testing
 Anda dapat mengetest apakah `Wordpress` telah terkoneksi dengan mengecek table pada `services` yang anda miliki, seperti gambar berikut yang memiliki table dan data yang sama setelah proses instalasi.
 
-![table on service1]()
+![table on service1](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/service_connected.PNG)
 
-![table on service2]()
 
 ### Langkah-langkah install Apache Jmeter
 #### 1. Download Jmeter
 #### 2. Ekstrak
+![dir of extraction](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/extract_jmeter.PNG)
 #### 3. Add Environment
+![add env](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/add_environmet.PNG)
 #### 4. Jalankan
+![launching jmeter](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/launced.PNG)
 
 ## Load Testing
+### Config
+#### 1. Add Thread Group (User)
+![add user](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_1.png)
+#### 2. Add Config Element
+![add http default](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_2.png)
+#### 3. Add Sampler
+![add http sample](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_3.png)
+#### 4. Set up Sampler
+![set up sample](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_6.png)
+#### 5. Add Listener
+![add listener](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_5.png)
+
+### Result
+#### 1. As a table
+![table result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_in_table.PNG)
+#### 2. As a graph
+![graph result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_graph.PNG)
+#### 3. Response as a graph
+![response graph result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_respon_graph.PNG)
+
+## Conclusion
