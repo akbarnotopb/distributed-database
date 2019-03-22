@@ -7,9 +7,13 @@
     1. [Node Baru / Node Proxy?](#pilih-node-aplikasi)
     2. [Langkah-langkah instalasi Wordpress](#langkah-langkah-install-wordpress)
     3. [Langkah-langkah instalasi Apache Jmeter](#langkah-langkah-install-apache-jmeter)
-4. Aaa
-## Architecture
+4. [Load Testing](#load-testing)
+    1. [Configuration](#config)
+    2. [Hasil Jmeter](#result)
+5. [Kesimpulan dan Perbandingan](#conclusion)
 
+## Architecture
+![architecture](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/architecture.png)
 
 ## Pre-Requisite
 1. MyCluster Installed , [klik disini](https://github.com/abaar/distributed-database/blob/master/README.md) jika anda belum menginstall-nya.
@@ -52,11 +56,13 @@ Seharusnya `APACHE` telah terinstall, jalankan `sudo systemctl status apache2` d
 ![foto status apache](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/apache2_succeed.PNG)
 
 #### 2. Update hosts pada `app1`
+Lewati langkah ini jika anda menginstall wordpress di `proxy`
 ```
 sudo cp /vagrant/config/application-layer/hosts /etc/hosts
 sudo ufw allow from proxy
 ```
 #### 3. Update hosts & rule pada `Proxy`
+Lewati langkah ini jika anda menginstall wordpress di `proxy`
 ```
 sudo ufw allow from 192.168.31.232
 ```
@@ -129,32 +135,63 @@ Anda dapat mengetest apakah `Wordpress` telah terkoneksi dengan mengecek table p
 
 ### Langkah-langkah install Apache Jmeter
 #### 1. Download Jmeter
+Download lah Jmeter [disini](https://jmeter.apache.org/download_jmeter.cgi)
+
 #### 2. Ekstrak
+Ekstraklah hasil donwload tersebut di tempat anda ingin menginstallnya , contohnya saya di alamat berikut.
+
 ![dir of extraction](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/extract_jmeter.PNG)
-#### 3. Add Environment
+
+#### 3. Add Environment (Optional)
+Tambahkan `%Jmeter%/bin` agar dapat mengakses Jmeter dari CMD tanpa harus pindah ke direktori tersebut. Apabila tidak menambahkan step ini, maka ketika ingin menajalankan Jmeter anda harus berada di folder `\bin` terlebih dahulu. atau jalankan `Jmeter.bat`
+
 ![add env](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/add_environmet.PNG)
+
 #### 4. Jalankan
+
 ![launching jmeter](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/launced.PNG)
 
 ## Load Testing
 ### Config
 #### 1. Add Thread Group (User)
+Tambahkan user yang anda ingin gunakan dengan menambahkan thread group dan isian 3 kolom tersebut (self-explanatory).
+
 ![add user](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_1.png)
+
 #### 2. Add Config Element
+
 ![add http default](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_2.png)
+
 #### 3. Add Sampler
+
 ![add http sample](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_3.png)
+
 #### 4. Set up Sampler
+Settinglah `IP ADDRESS` dimana anda menginstall `Wordpress` , dalam kasus ini saya menginstall di  Node `APP1`.
+
 ![set up sample](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_6.png)
+
 #### 5. Add Listener
+Ada berbagai macam listener, pilihlah sesuai kebutuhan anda!.
+
 ![add listener](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_config_5.png)
 
 ### Result
 #### 1. As a table
+
 ![table result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_in_table.PNG)
+
 #### 2. As a graph
+
 ![graph result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_graph.PNG)
+
 #### 3. Response as a graph
+
 ![response graph result](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/jmeter_result_respon_graph.PNG)
 
+
 ## Conclusion
+
+Dari gambar dibawah, sebenarnya dapat kita simpulkan bahwa apabila jumlah `service` atau `api` pada MySQL Cluster dikurangi, maka load akan terjadi lebih lama jika dibandingkan dengan [gambar ini](#3-response-as-a-graph) karena service meng-handle semua request sendiri (mematikan `service2` pada arsitektur ini).
+
+![comparison](https://github.com/abaar/distributed-database/blob/master/Example%20of%20Implementation/Screenshoot/Result_OneServiceOnly.PNG)
