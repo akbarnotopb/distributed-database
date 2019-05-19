@@ -1,8 +1,20 @@
 # Using MySQL Cluster and Redis Sentinel @ Laravel
 
 # Note
+I'm using this [MySQL Cluster](https://github.com/abaar/distributed-database/blob/master/README.md) and [Redis Sentinel](https://github.com/abaar/redis-implementation) architecture & installation guide.
+
+It cover 3 MySQL Datanodes, 2 MySQL Services, 1 MySQL Manager, 1 ProxySQL. And 3 Redis Server & Sentinel.
 
 # Jumpto
+1. [Configuration](#configuration)
+    1. [MySQL Cluster](#mysql-cluster)
+    2. [Redis Sentinel](#redis-sentinel)
+2. [Accessing](#accessing)
+    1. [MySQL Cluster](#mysql-cluster-1)
+    2. [Redis Sentinel](#redis-sentinel-1)
+3. [Failover & Screenshots](#failover--screenshots)
+    1. [MySQL Cluster](#mysql-cluster-2)
+    2. [Redis Sentinel](#redis-sentinel-2)
 
 # Configuration
 ## MySQL Cluster
@@ -79,3 +91,5 @@ use Illuminate\Support\Facades\Redis;
 ```
 
 # Failover & Screenshots
+## MySQL Cluster
+## Redis Sentinel
