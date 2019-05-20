@@ -19,6 +19,7 @@ It cover 3 MySQL Datanodes, 2 MySQL Services, 1 MySQL Manager, 1 ProxySQL. And 3
 # Configuration
 ## MySQL Cluster
 ### 1. env file
+Using MySQL Cluster at `Laravel` is pretty easy, first thing to set up is the `env` file. You need to define the `host` to be requested. it is `192.168.31.192` on my case since i use `ProxySQL` and you need to define the `PORT` also.
 ```
 ...
 DB_CONNECTION=mysql
@@ -30,6 +31,7 @@ DB_PASSWORD=admin # The Password
 ...
 ```
 ### 2. config/database.php
+Since MySQL Cluster is a `ndb`-based engine. You need to tell `Laravel` that every MySQL Request will be using `NDB` engine. You can set it up at `config/databse.php` just like below.
 ```
 ...
     'connections' => [
@@ -45,10 +47,13 @@ DB_PASSWORD=admin # The Password
 
 ## Redis Sentinel
 ### 1. Install predis
+You need third party package to use `Redis` at `Laravel`. The most popular package is `predis`.
 ```
 composer require predis/predis
 ```
+
 ### 2. config/database.php
+And then , you need to tell `Laravel` that you'll have `Redis Sentinel`. On my case, im using `Sentinel` connection so i can keep the `default` redis for later purposes. Well you can use `Sentinel` as `Redis Default` by changing `sentinel` name to `default`.
 ```
 'redis' => [
 
@@ -79,6 +84,7 @@ composer require predis/predis
 There is no special code to access MySQL Cluster at the Controller. The same as the default MySQL because laravel will access ProxySQL like standard MySQL but using 'NDB' engine and the ProxySQL will connect the Laravel and MySQL Cluster
 
 ## Redis Sentinel
+As i mentioned [before](#2--config/database--php-1) that i'll using `sentinel` connection to access `Redis Sentinel`, so you need to define which connection you are requesting. If you choose to use `Redis Sentinel` at default, just use `Redis::lrange` or other `command`.
 ```
 ...
 use Illuminate\Support\Facades\Redis;
