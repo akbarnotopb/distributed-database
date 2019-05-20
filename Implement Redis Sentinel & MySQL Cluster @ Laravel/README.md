@@ -1,18 +1,7 @@
 # Using MySQL Cluster and Redis Sentinel @ Laravel
 
-# Laravel App (example) Description
-The app that i'll be using is one of my internship project, it is a Laravel-web-based application that allow the user Register as an `Agent` to share and get Building Properties Information. 
-
-In this example, i'll use MySQL Cluster to store relational datas, meanwhile Location data will be stored in both Redis and MySQL Cluster. Because Location data will be requested frequently in some forms, that's where Redis work its part, and the Location data on MySQL only retrieved when the user request the properties detail.
-
-# Note
-I'm using this [MySQL Cluster](https://github.com/abaar/distributed-database/blob/master/README.md) and [Redis Sentinel](https://github.com/abaar/redis-implementation) architecture & installation guide.
-
-It cover 3 MySQL Datanodes, 2 MySQL Services, 1 MySQL Manager, 1 ProxySQL. And 3 Redis Server & Sentinel.
-
-![architecture](https://github.com/abaar/distributed-database/blob/master/Implement%20Redis%20Sentinel%20%26%20MySQL%20Cluster%20%40%20Laravel/Arsitektur%20BDT.jpeg)
-
 # Jumpto
+1. [Architecture](#architecture)
 1. [Configuration](#configuration)
     1. [MySQL Cluster](#mysql-cluster)
     2. [Redis Sentinel](#redis-sentinel)
@@ -22,6 +11,19 @@ It cover 3 MySQL Datanodes, 2 MySQL Services, 1 MySQL Manager, 1 ProxySQL. And 3
 3. [Failover & Screenshots](#failover--screenshots)
     1. [MySQL Cluster](#mysql-cluster-2)
     2. [Redis Sentinel](#redis-sentinel-2)
+
+
+# Laravel App (example) Description
+The app that i'll be using is one of my internship project, it is a Laravel-web-based application that allow the user Register as an `Agent` to share and get Building Properties Information. 
+
+In this example, i'll use MySQL Cluster to store relational datas, meanwhile Location data will be stored in both Redis and MySQL Cluster. Because Location data will be requested frequently in some forms, that's where Redis work its part, and the Location data on MySQL only retrieved when the user request the properties detail.
+
+# Architecture
+I'm using this [MySQL Cluster](https://github.com/abaar/distributed-database/blob/master/README.md) and [Redis Sentinel](https://github.com/abaar/redis-implementation) architecture & installation guide.
+
+It cover 3 MySQL Datanodes, 2 MySQL Services, 1 MySQL Manager, 1 ProxySQL. And 3 Redis Server & Sentinel.
+
+![architecture](https://github.com/abaar/distributed-database/blob/master/Implement%20Redis%20Sentinel%20%26%20MySQL%20Cluster%20%40%20Laravel/Arsitektur%20BDT.jpeg)
 
 # Configuration
 ## MySQL Cluster
