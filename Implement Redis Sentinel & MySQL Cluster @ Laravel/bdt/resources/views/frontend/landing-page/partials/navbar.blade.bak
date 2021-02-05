@@ -1,0 +1,56 @@
+<!-- BEGIN HEADER-->
+<header class="header header--brand">
+  <div class="container">
+    <div class="header__row">
+      <div class="header__social">
+        <div class="social social--header social--circles"><a href="#" class="social__item"><i class="fa fa-facebook"></i></a><a href="#" class="social__item"><i class="fa fa-twitter"></i></a><a href="#" class="social__item"><i class="fa fa-google-plus"></i></a></div>
+      </div>
+      <div class="auth auth--header">
+        <ul class="auth__nav">
+          @if(Auth::check())
+          <li class="dropdown auth__nav-item">
+            <button data-toggle="dropdown" type="button" class="dropdown-toggle js-auth-nav-btn auth__nav-btn"><img src="{{url('assets/frontend/media-demo/avatars/01.jpg')}}" alt="" class="auth__avatar"><span class="auth__name"> Hi {{auth()->user()->name}}</span></button>
+            <div class="dropdown__menu auth__dropdown--logged-in js-user-logged-in">
+              <nav class="nav nav--auth">
+                <ul class="nav__list">
+                  <li class="nav__item"><a href="{{route('dashboard.index')}}" class="nav__link active">Dashboard</a></li>
+                  <li class="nav__item"><a href="#" class="nav__link">Add Listing</a></li>
+                  <li class="nav__item"><a href="{{route('settings.account.edit')}}" class="nav__link">Profile</a></li>
+                  <li class="nav__item"><a href="{{route('agents.auth.logout')}}" class="nav__link">Log out</a></li>
+                </ul>
+              </nav>
+            </div>
+          </li>
+          @else
+          <li class="dropdown auth__nav-item">
+            <button type="button" class="dropdown-toggle js-auth-nav-btn auth__nav-btn" onclick="window.location.href='{{route('agents.auth.login')}}';">
+              <svg class="auth__icon-user">
+                <use xlink:href="#icon-user"></use>
+              </svg><span class="header__span"> Log in /</span>
+            </button>
+          </li>
+          <li class="dropdown auth__nav-item">
+            <button data-toggle="dropdown" type="button" class="dropdown-toggle auth__nav-btn" onclick="window.location.href='{{route('agents.auth.register')}}';"><span class="header__span">  Sign up</span></button>
+          </li>
+          @endif
+        </ul>
+        <!-- end of block .auth header-->
+      </div>
+      <button type="button" class="header__navbar-toggle js-navbar-toggle">
+        <svg class="header__navbar-show">
+          <use xlink:href="#icon-menu"></use>
+        </svg>
+        <svg class="header__navbar-hide">
+          <use xlink:href="#icon-menu-close"></use>
+        </svg>
+      </button>
+      <!-- end of block .header__navbar-toggle-->
+    </div>
+  </div>
+</header>
+<!-- END HEADER-->
+<!-- BEGIN NAVBAR-->
+<div id="header-nav-offset"></div>
+<nav id="header-nav" class="navbar navbar--header">
+</nav>
+<!-- END NAVBAR-->
